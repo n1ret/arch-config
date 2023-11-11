@@ -11,6 +11,7 @@ uid = int(os.getenv("SUDO_UID"))
 gid = int(os.getenv("SUDO_GID"))
 for src, dst in (
     ("zsh", "/usr/share/zsh"),
+    ("xorg.conf.d", "/etc/X11/xorg.conf.d"),
     ("home", home_dir)
 ):
     src = join("configs", src)
