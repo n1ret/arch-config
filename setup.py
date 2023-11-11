@@ -1,12 +1,12 @@
 import os
 import shutil
-from os.path import join, split, isdir, isfile
+from os.path import isdir, isfile, join, split
 
 if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
     print('Run script under sudo')
     quit(-1)
 
-home_dir = os.path.expanduser(f"~{os.getlogin()}")
+home_dir = os.path.expanduser(f"~{os.getenv("SUDO_USER")}")
 uid = int(os.getenv("SUDO_UID"))
 gid = int(os.getenv("SUDO_GID"))
 for src, dst in (
