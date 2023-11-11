@@ -1,3 +1,3 @@
-[submodule "powerlevel10k"]
-	path = powerlevel10k
+[submodule "configs/usr/share/zsh/powerlevel10k"]
+	path = configs/usr/share/zsh/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
