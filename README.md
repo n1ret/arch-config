@@ -1,11 +1,11 @@
 ### Setup
 
-Copy configs to /usr/share/zsh/
+Step in dir
 ```
-cp -r plugins powerlevel10k p10l-portable.zsh p10k.zsh zsh-config zsh-prompt /usr/share/zsh/
+cd arch-config
 ```
 
-Copy configs to $HOME
+Setup configs
 ```
-cp -r .zshrc .vimrc .p10k.zsh .config $HOME/
+sudo python setup.py
 ```
