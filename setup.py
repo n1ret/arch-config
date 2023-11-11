@@ -18,10 +18,12 @@ for src, dst in (
     for dir, dirs, files in os.walk(src):
         if split(dir)[-1].startswith(".git"):
             continue
-        dst_dir = join(dst, dir.lstrip(src))
+
+        dst_dir = join(dst, dir.removeprefix(src).lstrip(os.sep))
+
         if not isdir(dst_dir):
             os.mkdir(dst_dir)
-            if dst is home_dir:
+            if dst.startswith(home_dir):
                 os.chown(dst_dir, uid, gid)
 
         for file in files:
@@ -30,6 +32,7 @@ for src, dst in (
             file_path = join(dir, file)
 
             dst_path = join(dst_dir, file)
+
             if isfile(dst_path):
                 os.remove(dst_path)
 
@@ -37,5 +40,5 @@ for src, dst in (
                 file_path, dst_path
             )
 
-            if dst is home_dir:
+            if dst.startswith(home_dir):
                 os.chown(dst_path, uid, gid)
