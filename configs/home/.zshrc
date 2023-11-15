@@ -11,14 +11,16 @@ USE_POWERLINE="true"
 # Example:
 #    is not a diamond
 HAS_WIDECHARS="false"
-# Source zsh-configuration
+# Use zsh configuration
 if [[ -e /usr/share/zsh/zsh-config ]]; then
   source /usr/share/zsh/zsh-config
 fi
-# Use manjaro zsh prompt
+# Use zsh prompt
 if [[ -e /usr/share/zsh/zsh-prompt ]]; then
   source /usr/share/zsh/zsh-prompt
 fi
 
+[[ ! -f ~/.pathes.zsh ]] || source ~/.pathes.zsh
+[[ ! -f ~/.aliases.zsh ]] || source ~/.aliases.zsh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

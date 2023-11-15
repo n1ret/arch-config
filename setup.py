@@ -2,19 +2,16 @@ import os
 import shutil
 from os.path import isdir, isfile, join, split
 
+from dirs import CONFIGS, DIRS_ALIASES, HOME
+
 if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
     print('Run script under sudo')
     quit(-1)
 
-home_dir = os.path.expanduser(f"~{os.getenv("SUDO_USER")}")
 uid = int(os.getenv("SUDO_UID"))
 gid = int(os.getenv("SUDO_GID"))
-for src, dst in (
-    ("usr", "/usr"),
-    ("etc", "/etc"),
-    ("home", home_dir)
-):
-    src = join("configs", src)
+for src, dst in DIRS_ALIASES:
+    src = join(CONFIGS, src)
     for dir, dirs, files in os.walk(src):
         if split(dir)[-1].startswith(".git"):
             continue
@@ -23,7 +20,7 @@ for src, dst in (
 
         if not isdir(dst_dir):
             os.mkdir(dst_dir)
-            if dst.startswith(home_dir):
+            if dst.startswith(HOME):
                 os.chown(dst_dir, uid, gid)
 
         for file in files:
@@ -40,5 +37,7 @@ for src, dst in (
                 file_path, dst_path
             )
 
-            if dst.startswith(home_dir):
+            if dst.startswith(HOME):
                 os.chown(dst_path, uid, gid)
+
+print("Done!")
