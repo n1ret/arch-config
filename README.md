@@ -1,4 +1,4 @@
-### Download
+# Download
 
 Clone repository
 ```zsh
@@ -10,19 +10,19 @@ Step in dir
 cd arch-config
 ```
 
-### Scripts
+# Scripts
 
-# Setup configs
+### Setup configs
 ```zsh
 sudo python setup.py
 ```
 
-# Install paru
+### Install paru
 ```zsh
 source install_paru.zsh
 ```
 
-# Config for config)
+### Config for config)
 
 Update file at configs dir of this repo
 ```zsh
