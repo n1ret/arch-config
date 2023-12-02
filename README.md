@@ -29,12 +29,12 @@ Update file at configs dir of this repo
 sudo python arch-cfg.py --src path/to/file
 ```
 
-Turn on adding ./bin to path with /etc/profile.d file
+Turn on add ./bin to path by /etc/profile.d file
 ```zsh
 sudo python arch-cfg.py --install
 ```
 
-Turn off adding ./bin to path with /etc/profile.d file
+Turn off add ./bin to path by /etc/profile.d file
 ```zsh
 sudo python arch-cfg.py --delete
 ```
