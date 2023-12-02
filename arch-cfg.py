@@ -29,8 +29,10 @@ def update_config(args: Namespace, uid: int, gid: int):
         for dir in path.dirname(dstpath.removeprefix(cur_dir)).split(path.sep):
             cur_dir += dir + '/'
             if not path.isdir(cur_dir):
-                if path.isfile(cur_dir.rsplit('/')):
-                    os.remove(cur_dir)
+                if path.isfile(cur_dir.rstrip('/')):
+                    answer = input(f"Do you want to delete {cur_dir}? [Y/n] ")
+                    if answer.lower() in ('y', ''):
+                        os.remove(cur_dir)
                 os.mkdir(cur_dir)
                 os.chown(cur_dir, uid, gid)
 
