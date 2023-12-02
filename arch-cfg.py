@@ -1,8 +1,15 @@
 import os
-from argparse import ArgumentParser, FileType, Namespace
+from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from os import path
 
 from dirs import BIN_DIR, CONFIGS, DIRS_ALIASES
+
+
+class PathType:
+    def __call__(self, string):
+        if not path.exists(string):
+            raise ArgumentTypeError(f"\"{string}\" is not exists")
+        return string
 
 
 def install():
@@ -16,8 +23,14 @@ def delete():
     os.remove("/etc/profile.d/n1ret-cfg.sh")
 
 
-def update_config(args: Namespace, uid: int, gid: int):
-    abspath: str = path.abspath(args.src.name)
+def copy_file(abspath: str, uid: int, gid: int):
+    if not path.isfile(abspath):
+        answer = input(f"File {abspath} is not exists. Do you want to ignore? [Y/n] ")
+        if answer.lower() not in ('y', ''):
+            quit()
+        else:
+            return
+
     for dst, src in DIRS_ALIASES:
         if not abspath.startswith(src):
             continue
@@ -38,23 +51,39 @@ def update_config(args: Namespace, uid: int, gid: int):
 
         # Create file
         with open(dstpath, 'wb') as f:
-            f.write(args.src.read())
-            os.chown(dstpath, uid, gid)
+            with open(abspath, 'rb') as src_file:
+                f.write(src_file.read())
+        os.chown(dstpath, uid, gid)
 
         break
     else:
         print(f"Available only {', '.join(map(lambda t: t[1], DIRS_ALIASES))} dirs")
 
 
+def update_config(args: Namespace, uid: int, gid: int):
+    abspath: str = path.abspath(args.src)
+    if path.isfile(abspath):
+        copy_file(abspath, uid, gid)
+    else:
+        if not args.recursive:
+            print("Dir specified without --recursive argument")
+            return
+
+        for dir, _, nstd_files in os.walk(abspath):
+            for nstd_file in nstd_files:
+                copy_file(path.join(dir, nstd_file), uid, gid)
+
+
 def main():
     if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
-        print('Run script under sudo')
+        print('Run the script under sudo')
         return
 
     parser = ArgumentParser(description="Update config files for setup.py")
+    parser.add_argument("--recursive", "-r", action="store_true")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "--src", "-s", type=FileType('rb'),
+        "--src", "-s", type=PathType(),
         help="Source file path"
     )
     group.add_argument(
