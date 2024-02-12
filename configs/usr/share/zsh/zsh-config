@@ -63,14 +63,6 @@ alias free='free -m'                                            # Show sizes in 
 alias gitu='git add . && git commit && git push'
 alias la='ls -A'
 alias ll='ls -lAh'
-function sudo() {
-  if [[ $# == 0 ]]; then
-    /usr/bin/sudo
-  else
-    args="$@"
-    /usr/bin/sudo zsh -ic $args
-  fi
-}
 
 # Theming section  
 autoload -U compinit colors zcalc
