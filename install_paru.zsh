@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 start=$PWD
 cd /tmp
 
