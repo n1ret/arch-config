@@ -62,8 +62,9 @@ def copy_file(abspath: str, config: str, uid: int, gid: int):
 
 def update_config(args: Namespace, uid: int, gid: int):
     src_abspath: str = path.abspath(args.src)
+    files = []
     if path.isfile(src_abspath):
-        copy_file(src_abspath, args.config, uid, gid)
+        files.append(src_abspath)
     else:  # Path always exists
         if not args.recursive:
             print("Dir specified without --recursive argument")
@@ -71,7 +72,12 @@ def update_config(args: Namespace, uid: int, gid: int):
 
         for dir, _, nstd_files in os.walk(src_abspath):
             for nstd_file in nstd_files:
-                copy_file(path.join(dir, nstd_file), args.config, uid, gid)
+                files.append(path.join(dir, nstd_file))
+
+    for file in files:
+        copy_file(file, args.config, uid, gid)
+        if args.verbose:
+            print(f"File {args.src} successfully copied to `{args.config}` config")
 
 
 def main():
@@ -81,7 +87,7 @@ def main():
 
     parser = ArgumentParser(description="Update config files for setup.py")
     parser.add_argument("--recursive", "-r", action="store_true")
-    group = parser.add_mutually_exclusive_group(required=False)
+    parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument(
         "--src", "-s", type=PathType(),
         help="Source file path"
@@ -91,6 +97,7 @@ def main():
         default="global",
         help="Set config for file location"
     )
+    group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
         "--install", "-i", action="store_true",
         help="Specify to install arch-cfg.sh script with push dir to PATH"
