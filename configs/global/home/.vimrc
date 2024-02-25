@@ -1,6 +1,6 @@
 source $VIMRUNTIME/defaults.vim
 
-colorscheme default
+colorscheme slate
 highlight Normal ctermfg=white ctermbg=black
 set mouse-=a
 set number
