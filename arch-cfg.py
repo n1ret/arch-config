@@ -23,7 +23,7 @@ def delete():
     os.remove("/etc/profile.d/n1ret-cfg.sh")
 
 
-def copy_file(abspath: str, uid: int, gid: int):
+def copy_file(abspath: str, config: str, uid: int, gid: int):
     if not path.isfile(abspath):
         answer = input(f"File {abspath} is not exists. Do you want to ignore? [Y/n] ")
         if answer.lower() not in ('y', ''):
@@ -35,7 +35,7 @@ def copy_file(abspath: str, uid: int, gid: int):
         if not abspath.startswith(src):
             continue
 
-        dstpath = path.join(CONFIGS, dst, abspath.removeprefix(src).lstrip('/'))
+        dstpath = path.join(CONFIGS, config, dst, abspath.removeprefix(src).lstrip('/'))
 
         # Create dir
         cur_dir = CONFIGS + '/'
@@ -61,17 +61,17 @@ def copy_file(abspath: str, uid: int, gid: int):
 
 
 def update_config(args: Namespace, uid: int, gid: int):
-    abspath: str = path.abspath(args.src)
-    if path.isfile(abspath):
-        copy_file(abspath, uid, gid)
-    else:
+    src_abspath: str = path.abspath(args.src)
+    if path.isfile(src_abspath):
+        copy_file(src_abspath, args.config, uid, gid)
+    else:  # Path always exists
         if not args.recursive:
             print("Dir specified without --recursive argument")
             return
 
-        for dir, _, nstd_files in os.walk(abspath):
+        for dir, _, nstd_files in os.walk(src_abspath):
             for nstd_file in nstd_files:
-                copy_file(path.join(dir, nstd_file), uid, gid)
+                copy_file(path.join(dir, nstd_file), args.config, uid, gid)
 
 
 def main():
@@ -82,9 +82,14 @@ def main():
     parser = ArgumentParser(description="Update config files for setup.py")
     parser.add_argument("--recursive", "-r", action="store_true")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(
+    parser.add_argument(
         "--src", "-s", type=PathType(),
         help="Source file path"
+    )
+    parser.add_argument(
+        "--config", "-c", type=str,
+        default="global",
+        help="Set config for file location"
     )
     group.add_argument(
         "--install", "-i", action="store_true",

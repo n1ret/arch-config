@@ -1,5 +1,6 @@
 import os
 import shutil
+from argparse import ArgumentParser
 from os.path import isdir, isfile, join, split
 
 from dirs import CONFIGS, DIRS_ALIASES, HOME
@@ -8,36 +9,50 @@ if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
     print('Run script under sudo')
     quit(-1)
 
+argparser = ArgumentParser(description="Setup configs utility")
+argparser.add_argument("--config", "-c",
+                       choices=[path
+                                for path in os.listdir(CONFIGS)
+                                if isdir(join(CONFIGS, path))
+                                   and path != "global"],
+                       help="Config variant")
+
+args = argparser.parse_args()
+
 uid = int(os.getenv("SUDO_UID"))
 gid = int(os.getenv("SUDO_GID"))
-for src, dst in DIRS_ALIASES:
-    src = join(CONFIGS, src)
-    for dir, dirs, files in os.walk(src):
-        if split(dir)[-1].startswith(".git"):
-            continue
 
-        dst_dir = join(dst, dir.removeprefix(src).lstrip(os.sep))
-
-        if not isdir(dst_dir):
-            os.mkdir(dst_dir)
-            if dst.startswith(HOME):
-                os.chown(dst_dir, uid, gid)
-
-        for file in files:
-            if file == ".git":
+for config in ("global", args.config):
+    if not config:
+        continue
+    for src, dst in DIRS_ALIASES:
+        src = join(CONFIGS, config, src)
+        for dir, dirs, files in os.walk(src):
+            if split(dir)[-1].startswith(".git"):
                 continue
-            file_path = join(dir, file)
 
-            dst_path = join(dst_dir, file)
+            dst_dir = join(dst, dir.removeprefix(src).lstrip(os.sep))
 
-            if isfile(dst_path):
-                os.remove(dst_path)
+            if not isdir(dst_dir):
+                os.mkdir(dst_dir)
+                if dst.startswith(HOME):
+                    os.chown(dst_dir, uid, gid)
 
-            shutil.copy(
-                file_path, dst_path
-            )
+            for file in files:
+                if file == ".git":
+                    continue
+                file_path = join(dir, file)
 
-            if dst.startswith(HOME):
-                os.chown(dst_path, uid, gid)
+                dst_path = join(dst_dir, file)
+
+                if isfile(dst_path):
+                    os.remove(dst_path)
+
+                shutil.copy(
+                    file_path, dst_path
+                )
+
+                if dst.startswith(HOME):
+                    os.chown(dst_path, uid, gid)
 
 print("Done!")
