@@ -1,42 +1,47 @@
 # Download
 
 Clone repository
-```zsh
-git clone --recurse-submodules git@github.com:n1ret/arch-config.git
+```sh
+git clone --recurse-submodules https://github.com/n1ret/arch-config.git
 ```
 
 Step in dir
-```zsh
+```sh
 cd arch-config
 ```
 
 # Scripts
 
 ### Setup config
-Execute without <cfg_name> to setup only global config 
+Execute without `cfg_name` to setup only global config
 
-```zsh
-sudo python setup.py <cfg_name>
+```sh
+sudo python setup.py [cfg_name]
 ```
 
 ### Install paru
-```zsh
-source install_paru.zsh
+```sh
+./install_paru.sh
 ```
 
 ### Config for config)
 
-Update file at configs dir of this repo
-```zsh
+Update file at global config dir of this repo
+```sh
 sudo python arch-cfg.py --src path/to/file
 ```
 
+Specify config dir
+```sh
+sudo python arch-cfg.py --src path/to/file --config hyprland
+```
+
 Turn on add ./bin to path by /etc/profile.d file
-```zsh
+```sh
 sudo python arch-cfg.py --install
 ```
 
 Turn off add ./bin to path by /etc/profile.d file
-```zsh
+```sh
 sudo python arch-cfg.py --delete
 ```
