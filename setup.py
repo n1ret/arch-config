@@ -25,6 +25,15 @@ gid = int(os.getenv("SUDO_GID"))
 for config in ("global", args.config):
     if not config:
         continue
+
+    execute_path = join(CONFIGS, config, "execute.sh")
+    if isfile(execute_path) and os.access(execute_path, os.X_OK):
+        result = os.system(execute_path)
+        status_code = result >> 8
+        if status_code != 0:
+            print(f"Config `{config}` is not installed becouse execute.sh exit with code {status_code}")
+            continue
+
     for src, dst in DIRS_ALIASES:
         src = join(CONFIGS, config, src)
         for dir, dirs, files in os.walk(src):
