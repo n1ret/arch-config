@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Exit Hyprland gracefully bu closing all programs first
+HYPRCMDS=$(hyprctl -j clients | jq -j '.[] | "dispatch closewindow address:\(.address); "')
+hyprctl --batch "$HYPRCMDS" >> /tmp/hypr/hyprexitwithgrace.log 2>&1
+hyprctl dispatch exit
