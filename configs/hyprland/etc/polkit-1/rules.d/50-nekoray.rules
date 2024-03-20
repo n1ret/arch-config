@@ -1,0 +1,7 @@
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.policykit.exec"
+        && action.lookup("command_line") == "/usr/bin/bash /home/"+subject.user+"/.config/nekoray/config/vpn-run-root.sh"
+        && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
