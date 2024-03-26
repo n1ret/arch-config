@@ -8,5 +8,6 @@ sudo pacman -S hyprland hyprpaper hyprlock hypridle \
                xdg-desktop-portal-hyprland \
                sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg \
                pipewire pipewire-pulse \
+               wl-clipboard \
                firefox
 
