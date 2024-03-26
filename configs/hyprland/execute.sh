@@ -1,7 +1,8 @@
 #!/bin/sh
 
-sudo pacman -S hyprland hyprpaper \
+sudo pacman -S hyprland hyprpaper hyprlock hypridle \
                jq \
+               brightnessctl \
                thunar \
                polkit-kde-agent \
                xdg-desktop-portal-hyprland \
