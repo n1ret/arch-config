@@ -1,0 +1,4 @@
+#!/bin/sh
+
+out=$(cliphist list | wofi --dmenu | cliphist decode)
+[ $? -ne '0' ] || wl-copy $out
