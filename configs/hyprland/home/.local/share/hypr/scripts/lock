@@ -1,0 +1,4 @@
+#!/bin/sh
+
+brightnessctl -qd rgb:kbd_backlight -s
+brightnessctl -qd rgb:kbd_backlight s 0
