@@ -10,5 +10,6 @@ sudo pacman -S hyprland hyprpaper hyprlock hypridle \
                sddm qt5-quickcontrols2 qt5-graphicaleffects qt5-svg \
                pipewire pipewire-pulse \
                wl-clipboard cliphist \
+               waybar \
                firefox
 
