@@ -1,4 +1,7 @@
 #!/bin/sh
-
-out=$(cliphist list | wofi --dmenu | cliphist decode)
-[ $? -ne '0' ] || wl-copy $out
+if pidof wofi;
+    then pkill wofi;
+    else
+        out=$(cliphist list | wofi --dmenu | cliphist decode);
+        [ $? -ne '0' ] || wl-copy $out;
+fi
