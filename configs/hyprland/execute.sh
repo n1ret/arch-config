@@ -11,5 +11,6 @@ sudo pacman -S hyprland hyprpaper hyprlock hypridle \
                pipewire pipewire-pulse \
                wl-clipboard cliphist \
                waybar \
+               mako \
                firefox
 
