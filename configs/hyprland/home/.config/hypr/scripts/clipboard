@@ -1,7 +1,8 @@
 #!/bin/sh
-if pidof wofi;
-    then pkill wofi;
-    else
-        out=$(cliphist list | wofi --dmenu | cliphist decode);
-        [ $? -ne '0' ] || wl-copy $out;
+
+if pidof rofi; then
+    pkill rofi
+else
+    out=$(cliphist list | ~/.config/rofi/dmenu/dmenu.sh | cliphist decode);
+    [ $? -ne '0' ] || wl-copy "$out";
 fi
