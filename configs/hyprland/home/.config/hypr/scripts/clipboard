@@ -3,6 +3,7 @@
 if pidof rofi; then
     pkill rofi
 else
-    out=$(cliphist list | ~/.config/rofi/dmenu/dmenu.sh | cliphist decode);
-    [ $? -ne '0' ] || wl-copy "$out";
+    out=$(cliphist list | ~/.config/rofi/dmenu/dmenu.sh | cliphist decode)
+    [ $? -ne '0' ] || wl-copy "$out"
 fi
+

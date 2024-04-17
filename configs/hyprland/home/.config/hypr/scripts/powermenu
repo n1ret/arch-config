@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if pidof rofi; then
+    pkill rofi
+else
+    ~/.config/rofi/powermenu/powermenu.sh
+fi
+
