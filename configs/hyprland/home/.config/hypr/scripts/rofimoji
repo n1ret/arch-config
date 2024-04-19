@@ -3,6 +3,6 @@
 if pidof rofi; then
     pkill rofi
 else
-    rofimoji --selector-args="-theme ~/.config/rofi/dmenu/style-2.rasi" --skin-tone neutral --files emojis
+    rofimoji --selector-args="-theme ~/.config/rofi/dmenu/style-2.rasi" --skin-tone neutral --files emojis nerdfont
 fi
 

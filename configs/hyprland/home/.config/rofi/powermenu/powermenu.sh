@@ -27,6 +27,16 @@ logout=''
 yes=''
 no=''
 
+# Decode chosen
+decode() {
+    for var in shutdown reboot suspend logout; do
+        if [[ $chosen == ${!var} ]]; then
+            echo "<b>$var</b>"
+            break
+        fi
+    done
+}
+
 # Rofi CMD
 rofi_cmd() {
 	rofi -dmenu \
@@ -44,7 +54,7 @@ confirm_cmd() {
 		-theme-str 'textbox {horizontal-align: 0.5;}' \
 		-dmenu \
 		-p 'Confirmation' \
-		-mesg 'Are you Sure?' \
+        -mesg "Are you sure to $(decode)?" \
 		-theme ${dir}/${theme}.rasi
 }
 

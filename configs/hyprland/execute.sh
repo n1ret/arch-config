@@ -1,6 +1,8 @@
 #!/bin/sh
 
-$(dirname $(realpath "$0"))/../../install_paru.sh
+base_dir="$(dirname $(realpath "$0"))/../.."
+
+$base_dir/install_paru.sh
 
 paru -S hyprland hyprpaper hyprlock hypridle \
         jq \
@@ -14,6 +16,7 @@ paru -S hyprland hyprpaper hyprlock hypridle \
         wl-clipboard cliphist \
         waybar \
         mako \
+        neovim \
         firefox
 
 sudo systemctl enable sddm.service
