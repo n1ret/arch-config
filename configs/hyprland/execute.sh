@@ -21,4 +21,3 @@ paru -S hyprland hyprpaper hyprlock hypridle \
 
 sudo systemctl enable sddm.service
 systemctl enable --user pipewire-pulse.service pipewire.service
-

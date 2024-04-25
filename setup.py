@@ -6,7 +6,7 @@ from os.path import isdir, isfile, join, split
 from dirs import CONFIGS, DIRS_ALIASES, HOME
 
 if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
-    print('Run script under sudo')
+    print('Run script via sudo')
     quit(-1)
 
 argparser = ArgumentParser(description="Setup configs utility")
@@ -28,7 +28,7 @@ for config in ("global", args.config):
 
     execute_path = join(CONFIGS, config, "execute.sh")
     if isfile(execute_path) and os.access(execute_path, os.X_OK):
-        result = os.system(execute_path)
+        result = os.system(f"sudo -u $SUDO_USER {execute_path}")
         status_code = result >> 8
         if status_code != 0:
             print(f"Config `{config}` is not installed becouse execute.sh exit with code {status_code}")
