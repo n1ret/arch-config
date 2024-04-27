@@ -115,7 +115,7 @@
     "max-length": 10,
     "tooltip": true,
     "tooltip-format": "Memory - {used:0.1f}GB used",
-    "on-click": "kitty -e btop"
+    "on-click": "kitty -e htop"
   },
 
   "network": {
