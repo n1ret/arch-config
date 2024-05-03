@@ -2,7 +2,7 @@
 
 base_dir="$(dirname $(realpath "$0"))/../.."
 
-$base_dir/install_paru.sh
+$base_dir/scripts/install_paru
 
 paru -S hyprland hyprpaper hyprlock hypridle \
         jq \
