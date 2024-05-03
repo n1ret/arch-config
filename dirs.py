@@ -11,5 +11,6 @@ HOME = os.path.expanduser(f"~{os.getenv('SUDO_USER')}")
 DIRS_ALIASES = (
     ("usr", "/usr"),
     ("etc", "/etc"),
+    ("root", "/root"),
     ("home", HOME)
 )
