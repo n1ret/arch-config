@@ -21,7 +21,7 @@ sudo python setup.py [-c cfg_name]
 
 ### Install paru
 ```sh
-./install_paru.sh
+./scripts/install_paru
 ```
 
 ### Config for config)
