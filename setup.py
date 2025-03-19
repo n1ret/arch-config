@@ -31,7 +31,7 @@ for config in ("global", args.config):
         result = os.system(f"sudo -u $SUDO_USER {execute_path}")
         status_code = result >> 8
         if status_code != 0:
-            print(f"Config `{config}` is not installed becouse execute.sh exit with code {status_code}")
+            print(f"Config `{config}` is not installed because execute.sh exit with code {status_code}")
             continue
 
     for src, dst in DIRS_ALIASES:
