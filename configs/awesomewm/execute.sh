@@ -6,5 +6,6 @@ $base_dir/scripts/install_paru
 
 paru --needed -S \
     awesome \
-    lightdm lightdm-gtk-greeter
+    lightdm lightdm-gtk-greeter \
+    kitty
 

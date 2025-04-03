@@ -9,9 +9,16 @@ set foldcolumn=1
 set expandtab
 set smarttab
 set smartindent
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set nowrap
 
-command W w !sudo tee > /dev/null %
+function SudoWrite()
+    w !sudo tee % > /dev/null
+    e!
+endfunction
+
+command W call SudoWrite()
+command Wq call SudoWrite() | quit
 

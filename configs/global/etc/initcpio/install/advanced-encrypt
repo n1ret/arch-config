@@ -1,0 +1,43 @@
+#!/bin/bash
+
+build() {
+    local mod
+
+    map add_module 'dm-crypt' 'dm-integrity' 'hid-generic?'
+    if [[ -n "$CRYPTO_MODULES" ]]; then
+        for mod in $CRYPTO_MODULES; do
+            add_module "$mod"
+        done
+    else
+        add_all_modules '/crypto/'
+    fi
+
+    add_binary 'cryptsetup'
+
+    map add_udev_rule \
+        '10-dm.rules' \
+        '13-dm-disk.rules' \
+        '95-dm-notify.rules' \
+        '/usr/lib/initcpio/udev/11-dm-initramfs.rules'
+
+    # cryptsetup calls pthread_create(), which dlopen()s libgcc_s.so.1
+    add_binary '/usr/lib/libgcc_s.so.1'
+
+    # cryptsetup loads the legacy provider which is required for whirlpool
+    add_binary '/usr/lib/ossl-modules/legacy.so'
+
+    # password input
+    add_binary 'stty'
+
+    add_runscript
+}
+
+help() {
+    cat <<HELPEOF
+This hook has full back capability with the default `encrypt` hook.
+So it has the same kernel params to work.
+Difference only in Ctrl+C shortcut to suspend machine.
+HELPEOF
+}
+
+# vim: set ft=sh ts=4 sw=4 et:
