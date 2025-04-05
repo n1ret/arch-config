@@ -52,9 +52,10 @@ keys[pagedown]="[6~"
 keys[crarrow]="[1;5C"
 keys[clarrow]="[1;5D"
 keys[backspace]=""
-keys[cbackspace]=""
+keys[cbackspace]="^H"
 
-bindkey -M custom -R " "-"~" self-insert
+cbind -R " "-"~" self-insert
+cbind -R "\M-^@"-"\M-^?" self-insert
 ckbind "home" beginning-of-line
 ckbind "end" end-of-line
 ckbind "tab" expand-or-complete
@@ -63,9 +64,13 @@ ckbind "insert" overwrite-mode
 ckbind "delete" delete-char
 ckbind "backspace" backward-delete-char
 ckbind "uarrow" up-line-or-history
+cbind "^[k" up-line-or-history
 ckbind "darrow" down-line-or-history
+cbind "^[j" down-line-or-history
 ckbind "rarrow" forward-char
+cbind "^[l" forward-char
 ckbind "larrow" backward-char
+cbind "^[h" backward-char
 ckbind "pageup" history-beginning-search-backward
 ckbind "pagedown" history-beginning-search-forward
 ckbind "crarrow" forward-word
