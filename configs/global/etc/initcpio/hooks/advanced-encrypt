@@ -5,7 +5,7 @@ run_hook() {
     prompt_password() {
         local res password prev_stty
 
-        printf "Enter encryption passphrase: "
+        printf "Enter encryption passphrase. Ctrl+A to clear: "
 
         prev_stty=$(stty -g)
         stty raw -echo
@@ -14,13 +14,16 @@ run_hook() {
         while :; do
             symb=$(dd bs=1 count=1 2>/dev/null)
             matches=$(printf "$symb" | grep -E '^[]a-zA-Z0-9~`!@#$%^&*()_=+[{}/?\|'"'"'":;<>\.,-]' | wc -l)
-            if [ "$symb" = "" ]; then
-                /usr/bin/poweroff -f
-            elif [ "$symb" = "" ]; then
-                break
-            elif [ "$matches" -gt "0" ]; then
-                password="$password""$symb"
-            fi
+            case "$symb" in
+                "") /usr/bin/poweroff -f;;
+                "") break;;
+                "") password="";;
+                *)
+                    if [ "$matches" -gt "0" ]; then
+                        password="$password""$symb"
+                    fi
+                    ;;
+            esac
         done
 
         stty "$prev_stty"
