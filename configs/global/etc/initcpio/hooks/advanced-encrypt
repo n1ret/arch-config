@@ -18,6 +18,7 @@ run_hook() {
                 "") /usr/bin/poweroff -f;;
                 "") break;;
                 "") password="";;
+                "") password="${password%?}";;
                 *)
                     if [ "$matches" -gt "0" ]; then
                         password="$password""$symb"
