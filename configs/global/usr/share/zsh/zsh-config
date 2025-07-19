@@ -56,6 +56,7 @@ keys[cbackspace]="^H"
 
 cbind -R " "-"~" self-insert
 cbind -R "\M-^@"-"\M-^?" self-insert
+cbind "^[[200~" bracketed-paste
 ckbind "home" beginning-of-line
 ckbind "end" end-of-line
 ckbind "tab" expand-or-complete
