@@ -10,6 +10,10 @@ function codee() {
   code $1 && exit
 }
 
+if [ "$TERM_PROGRAM" = "vscode" ]; then
+    alias gwd='cd "$VSCODE_CWD"'
+fi
+
 alias ssh="kitten ssh"
 
 alias n="nvim"

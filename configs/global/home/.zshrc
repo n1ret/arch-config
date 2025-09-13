@@ -9,10 +9,6 @@ if command -v nvim > /dev/null; then
   export SUDO_EDITOR=nvim
 fi
 
-if [ "$TERM_PROGRAM" = "vscode" ]; then
-    alias gwd='cd "$VCS_STATUS_WORKDIR"'
-fi
-
 # Use powerline
 USE_POWERLINE="true"
 # Has weird character width
