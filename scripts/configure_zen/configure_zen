@@ -1,0 +1,5 @@
+#!/bin/sh
+
+script_dir=$(realpath "$(dirname "$0")")
+
+cp "$script_dir/user.js" "$HOME/.zen/"*".Default (release)"
