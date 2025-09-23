@@ -20,13 +20,22 @@ zstyle ':completion:*' menu select                              # Highlight menu
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
+
+# Variables
 HISTFILE=~/.zhistory
 HISTSIZE=10000
 SAVEHIST=10000
+
 export EDITOR=/bin/vim
 export VISUAL=/bin/vim
+
+if command -v /bin/nvim > /dev/null; then
+  export SUDO_EDITOR=/bin/nvim
+  export EDITOR=/bin/nvim
+  export VISUAL=/bin/nvim
+fi
+
 WORDCHARS=$(printf "%s" "$WORDCHARS" | tr -d "/.;[](){}\-_")    # Don't consider certain characters part of the word
-# Variables
 export LANG=en_US.UTF-8
 
 ## Keybindings section
