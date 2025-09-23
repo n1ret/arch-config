@@ -33,12 +33,14 @@ export LANG=en_US.UTF-8
 bindkey -N custom
 alias cbind="bindkey -M custom"
 function ckbind() {
-  cbind "${keys[$1]}" "$2"
+  for key in "${=keys[$1]}"; do
+    cbind "$key" "$2"
+  done
 }
 
 typeset -A keys
-keys[home]="[H"
-keys[end]="[F"
+keys[home]="[H [1~"
+keys[end]="[F [4~"
 keys[tab]="^I"
 keys[stab]="[Z"
 keys[insert]="[2~"

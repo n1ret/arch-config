@@ -7,6 +7,7 @@ fi
 
 if command -v nvim > /dev/null; then
   export SUDO_EDITOR=nvim
+  export EDITOR=nvim
 fi
 
 # Use powerline
@@ -29,3 +30,4 @@ fi
 
 [[ ! -f ~/.aliases.zsh ]] || source ~/.aliases.zsh
 [[ ! -f ~/.startup.zsh ]] || source ~/.startup.zsh
+

@@ -17,5 +17,7 @@ fi
 alias ssh="kitten ssh"
 
 alias n="nvim"
+
 alias se="sudoedit"
+alias visudo="sudo SUDO_EDITOR=vim visudo"
 
