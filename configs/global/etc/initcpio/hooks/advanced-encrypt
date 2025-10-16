@@ -31,8 +31,15 @@ run_hook() {
 
         printf "\n"
 
-        echo "$password" | eval cryptsetup open --type luks "${resolved}" "${cryptname}" "${cryptargs}" "${CSQUIET}"
-        return $?
+        echo "$password" | cryptsetup open --type luks "${resolved}" "${cryptname}" "${cryptargs}"
+        local status=$?
+
+        if [ $status -eq 0 ]; then
+            local green="\e[0;32m" reset="\e[0m"
+            echo -e "${green}Key found${reset}"
+        fi
+
+        return $status
     }
 
     local quiet rootdelay
