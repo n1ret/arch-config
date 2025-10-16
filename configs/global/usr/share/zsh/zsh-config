@@ -54,6 +54,7 @@ keys[tab]="^I"
 keys[stab]="[Z"
 keys[insert]="[2~"
 keys[delete]="[3~"
+keys[cdelete]="[3;5~"
 keys[uarrow]="[A"
 keys[darrow]="[B"
 keys[rarrow]="[C"
@@ -74,6 +75,7 @@ ckbind "tab" expand-or-complete
 ckbind "stab" reverse-menu-complete
 ckbind "insert" overwrite-mode
 ckbind "delete" delete-char
+ckbind "cdelete" delete-word
 ckbind "backspace" backward-delete-char
 ckbind "uarrow" up-line-or-history
 cbind "^[k" up-line-or-history
