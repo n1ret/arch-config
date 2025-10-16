@@ -25,4 +25,5 @@ fi
 
 [[ ! -f ~/.aliases.zsh ]] || source ~/.aliases.zsh
 [[ ! -f ~/.startup.zsh ]] || source ~/.startup.zsh
+[[ ! -f ~/.local-startup.zsh ]] || source ~/.local-startup.zsh
 
