@@ -36,7 +36,7 @@ run_hook() {
 
         if [ $status -eq 0 ]; then
             local green="\e[0;32m" reset="\e[0m"
-            echo -e "${green}Key found${reset}"
+            echo -e "${green}Success!${reset}"
         fi
 
         return $status
