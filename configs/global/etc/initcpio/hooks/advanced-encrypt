@@ -10,6 +10,10 @@ run_hook() {
         prev_stty=$(stty -g)
         stty raw -echo
 
+        local save_cur_pos="\e[s" restore_cur_pos="\e[u" clear_eol="\e[K" cur_left="\e[D" green="\e[0;32m" reset="\e[0m"
+
+        printf "$save_cur_pos"
+
         password=""
         while :; do
             symb=$(dd bs=1 count=1 2>/dev/null)
@@ -17,10 +21,19 @@ run_hook() {
             case "$symb" in
                 "") /usr/bin/poweroff -f;;
                 "") break;;
-                "") password="";;
-                "") password="${password%?}";;
+                "")
+                    password=""
+                    printf "$restore_cur_pos$clear_eol"
+                    ;;
+                "")
+                    if [ "$password" ]; then
+                        password="${password%?}"
+                        printf "$cur_left$clear_eol"
+                    fi
+                    ;;
                 *)
                     if [ "$matches" -gt "0" ]; then
+                        printf "*"
                         password="$password""$symb"
                     fi
                     ;;
@@ -29,13 +42,12 @@ run_hook() {
 
         stty "$prev_stty"
 
-        printf "\n"
+        printf "\nProbing...\n"
 
         echo "$password" | cryptsetup open --type luks "${resolved}" "${cryptname}" "${cryptargs}"
         local status=$?
 
         if [ $status -eq 0 ]; then
-            local green="\e[0;32m" reset="\e[0m"
             echo -e "${green}Success!${reset}"
         fi
 
