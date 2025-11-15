@@ -1,3 +1,4 @@
 #!/bin/sh
 
-sudo reflector --latest 5 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+sudo reflector --age 12 --protocol https --sort rate --fastest 10 --save /etc/pacman.d/mirrorlist
+
