@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec={{HOME}}/.local/share/n1ret-scripts/lockscreen-watcher
+Icon=application-x-shellscript
+Name=lockscreen-watcher
+Type=Application
+X-KDE-AutostartScript=true

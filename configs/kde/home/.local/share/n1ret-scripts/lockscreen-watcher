@@ -1,0 +1,7 @@
+#!/bin/bash
+dbus-monitor --profile --session "type='signal',interface='org.kde.screensaver',path='/ScreenSaver',member='AboutToLock'" |
+  grep --line-buffered "org.kde" |
+  while read -r _; do
+    qdbus6 org.kde.keyboard /Layouts setLayout 0 >/dev/null
+  done
+
