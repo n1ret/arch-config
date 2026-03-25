@@ -8,25 +8,25 @@ from dirs import BIN_DIR, CONFIGS, DIRS_ALIASES
 class PathType:
     def __call__(self, string):
         if not path.exists(string):
-            raise ArgumentTypeError(f"\"{string}\" is not exists")
+            raise ArgumentTypeError(f'"{string}" is not exists')
         return string
 
 
-def install():
+def install(uid: int):
     command = f"export PATH=$PATH:{BIN_DIR}"
-    with open("/etc/profile.d/n1ret-cfg.sh", 'w') as f:
-        f.write(command)
+    with open(f"/etc/profile.d/n1ret-cfg-for-{uid}.sh", "w") as f:
+        f.write(f"if [[ $(id -u) == {uid} ]]; then\n  {command}\nfi")
     os.system(command)
 
 
-def delete():
-    os.remove("/etc/profile.d/n1ret-cfg.sh")
+def delete(uid: int):
+    os.remove(f"/etc/profile.d/n1ret-cfg-for-{uid}.sh")
 
 
 def copy_file(abspath: str, config: str, uid: int, gid: int):
     if not path.isfile(abspath):
         answer = input(f"File {abspath} is not exists. Do you want to ignore? [Y/n] ")
-        if answer.lower() not in ('y', ''):
+        if answer.lower() not in ("y", ""):
             quit()
         else:
             return
@@ -35,23 +35,23 @@ def copy_file(abspath: str, config: str, uid: int, gid: int):
         if not abspath.startswith(src):
             continue
 
-        dstpath = path.join(CONFIGS, config, dst, abspath.removeprefix(src).lstrip('/'))
+        dstpath = path.join(CONFIGS, config, dst, abspath.removeprefix(src).lstrip("/"))
 
         # Create dir
-        cur_dir = CONFIGS + '/'
+        cur_dir = CONFIGS + "/"
         for dir in path.dirname(dstpath.removeprefix(cur_dir)).split(path.sep):
-            cur_dir += dir + '/'
+            cur_dir += dir + "/"
             if not path.isdir(cur_dir):
-                if path.isfile(cur_dir.rstrip('/')):
+                if path.isfile(cur_dir.rstrip("/")):
                     answer = input(f"Do you want to delete {cur_dir}? [Y/n] ")
-                    if answer.lower() in ('y', ''):
+                    if answer.lower() in ("y", ""):
                         os.remove(cur_dir)
                 os.mkdir(cur_dir)
                 os.chown(cur_dir, uid, gid)
 
         # Create file
-        with open(dstpath, 'wb') as f:
-            with open(abspath, 'rb') as src_file:
+        with open(dstpath, "wb") as f:
+            with open(abspath, "rb") as src_file:
                 f.write(src_file.read())
         os.chown(dstpath, uid, gid)
 
@@ -82,45 +82,48 @@ def update_config(args: Namespace, uid: int, gid: int):
 
 def main():
     if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
-        print('Run the script under sudo')
+        print("Run the script under sudo")
         return
 
     parser = ArgumentParser(description="Update config files for setup.py")
     parser.add_argument("--recursive", "-r", action="store_true")
     parser.add_argument("--verbose", "-v", action="store_true")
+    parser.add_argument("--src", "-s", type=PathType(), help="Source file path")
     parser.add_argument(
-        "--src", "-s", type=PathType(),
-        help="Source file path"
-    )
-    parser.add_argument(
-        "--config", "-c", type=str,
+        "--config",
+        "-c",
+        type=str,
         default="global",
-        help="Set config for file location"
+        help="Set config for file location",
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        "--install", "-i", action="store_true",
-        help="Specify to install arch-cfg.sh script with push dir to PATH"
+        "--install",
+        "-i",
+        action="store_true",
+        help="Specify to install arch-cfg.sh script with push dir to PATH",
     )
     group.add_argument(
-        "--delete", "-d", action="store_true",
-        help="Specify to remove arch-cfg.sh script with push dir to PATH"
+        "--delete",
+        "-d",
+        action="store_true",
+        help="Specify to remove arch-cfg.sh script with push dir to PATH",
     )
     args = parser.parse_args()
     uid = int(os.getenv("SUDO_UID"))
     gid = int(os.getenv("SUDO_GID"))
 
     if args.install:
-        install()
+        install(uid)
         print("! Relogin needed")
 
     elif args.delete:
-        delete()
+        delete(uid)
         print("! Relogin needed")
 
     if args.src:
         update_config(args, uid, gid)
-    
+
     print("Done")
 
 

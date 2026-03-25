@@ -26,22 +26,27 @@ sudo python setup.py [-c cfg_name]
 
 ### Config for config)
 
-Update file at global config dir of this repo
+Build a binary of the arch-cfg.py script
+```sh
+./build.sh
+```
+
+Update the file at the global config dir
 ```sh
 sudo python arch-cfg.py --src path/to/file
 ```
 
-Specify config dir
+Specify the config directory to update
 ```sh
 sudo python arch-cfg.py --src path/to/file --config hyprland
 ```
 
-Turn on add ./bin to path by /etc/profile.d file
+Turn on addition of the `bin` directory to the PATH env variable using /etc/profile.d file
 ```sh
 sudo python arch-cfg.py --install
 ```
 
-Turn off add ./bin to path by /etc/profile.d file
+Turn off addition of the `bin` directory to the PATH env variable using /etc/profile.d file
 ```sh
 sudo python arch-cfg.py --delete
 ```
