@@ -16,7 +16,7 @@ cd arch-config
 Execute without `-c` to setup only global config
 
 ```sh
-sudo python setup.py [-c cfg_name]
+python setup.py [-c cfg_name]
 ```
 
 ### Install paru

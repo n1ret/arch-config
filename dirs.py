@@ -7,7 +7,11 @@ else:
     DIR = os.path.dirname(__file__)
 BIN_DIR = os.path.join(DIR, "bin")
 CONFIGS = os.path.join(DIR, "configs")
-HOME = os.path.expanduser(f"~{os.getenv('SUDO_USER')}")
+HOME = os.getenv("HOME")
+_sudo_user = os.getenv("SUDO_USER")
+if _sudo_user is not None:
+    HOME = os.path.expanduser(f"~{_sudo_user}")
+
 DIRS_ALIASES = (
     ("usr", "/usr"),
     ("etc", "/etc"),
