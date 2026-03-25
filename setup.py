@@ -1,67 +1,122 @@
 import os
-import shutil
+import re
 from argparse import ArgumentParser
 from os.path import isdir, isfile, join, split
 
 from dirs import CONFIGS, DIRS_ALIASES, HOME
 
-if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
-    print('Run script via sudo')
-    quit(-1)
+PLACEHOLDER_RE = re.compile(r"\{\{([\w-]+)\}\}")
+ESCAPED_PLACEHOLDER_RE = re.compile(r"\\\{\{([\w-]+)\}\}")
 
-argparser = ArgumentParser(description="Setup configs utility")
-argparser.add_argument("--config", "-c",
-                       choices=[path
-                                for path in os.listdir(CONFIGS)
-                                if isdir(join(CONFIGS, path))
-                                   and path != "global"],
-                       help="Config variant")
 
-args = argparser.parse_args()
+def expand_env_templates(text: str):
+    escaped_backslashes = set()
 
-uid = int(os.getenv("SUDO_UID"))
-gid = int(os.getenv("SUDO_GID"))
+    for i in range(len(text)):
+        if (
+            i >= 1
+            and text[i] == "\\"
+            and text[i - 1] == "\\"
+            and i - 1 not in escaped_backslashes
+        ):
+            escaped_backslashes.update((i - 1, i))
 
-for config in ("global", args.config):
-    if not config:
-        continue
+    def replace_placeholder(match: re.Match):
+        prev = match.start() - 1
+        if prev >= 0 and text[prev] == "\\" and prev not in escaped_backslashes:
+            return match.group(0)
 
-    execute_path = join(CONFIGS, config, "execute.sh")
-    if isfile(execute_path) and os.access(execute_path, os.X_OK):
-        result = os.system(f"sudo -u $SUDO_USER {execute_path}")
-        status_code = result >> 8
-        if status_code != 0:
-            print(f"Config `{config}` is not installed because execute.sh exit with code {status_code}")
+        return os.getenv(match.group(1), "")
+
+    def replace_escaped_placeholder(match: re.Match):
+        return match.group(0).replace("\\{{", "{{")
+
+    text = PLACEHOLDER_RE.sub(replace_placeholder, text)
+    text = ESCAPED_PLACEHOLDER_RE.sub(replace_escaped_placeholder, text)
+
+    return text.replace("\\\\", "\\")
+
+
+def expand_data(data: bytes):
+    try:
+        source_text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data
+
+    return expand_env_templates(source_text).encode("utf-8")
+
+
+def main():
+    if os.getuid() != 0 or os.getenv("SUDO_UID") is None:
+        print("Run script via sudo")
+        quit(-1)
+
+    argparser = ArgumentParser(description="Setup configs utility")
+    argparser.add_argument(
+        "--config",
+        "-c",
+        choices=[
+            path
+            for path in os.listdir(CONFIGS)
+            if isdir(join(CONFIGS, path)) and path != "global"
+        ],
+        help="Config variant",
+    )
+
+    args = argparser.parse_args()
+
+    uid = int(os.getenv("SUDO_UID"))
+    gid = int(os.getenv("SUDO_GID"))
+
+    for config in ("global", args.config):
+        if not config:
             continue
 
-    for src, dst in DIRS_ALIASES:
-        src = join(CONFIGS, config, src)
-        for dir, dirs, files in os.walk(src):
-            if split(dir)[-1].startswith(".git"):
+        execute_path = join(CONFIGS, config, "execute.sh")
+        if isfile(execute_path) and os.access(execute_path, os.X_OK):
+            result = os.system(f"sudo -u $SUDO_USER {execute_path}")
+            status_code = result >> 8
+            if status_code != 0:
+                print(
+                    f"Config `{config}` is not installed because "
+                    f"execute.sh exit with code {status_code}"
+                )
                 continue
 
-            dst_dir = join(dst, dir.removeprefix(src).lstrip(os.sep))
-
-            if not isdir(dst_dir):
-                os.mkdir(dst_dir)
-                if dst.startswith(HOME):
-                    os.chown(dst_dir, uid, gid)
-
-            for file in files:
-                if file == ".git":
+        for src, dst in DIRS_ALIASES:
+            src = join(CONFIGS, config, src)
+            for dir, dirs, files in os.walk(src):
+                if split(dir)[-1].startswith(".git"):
                     continue
-                file_path = join(dir, file)
 
-                dst_path = join(dst_dir, file)
+                dst_dir = join(dst, dir.removeprefix(src).lstrip(os.sep))
 
-                if isfile(dst_path):
-                    os.remove(dst_path)
+                if not isdir(dst_dir):
+                    os.mkdir(dst_dir)
+                    if dst.startswith(HOME):
+                        os.chown(dst_dir, uid, gid)
 
-                shutil.copy(
-                    file_path, dst_path
-                )
+                for file in files:
+                    if file == ".git":
+                        continue
+                    file_path = join(dir, file)
 
-                if dst.startswith(HOME):
-                    os.chown(dst_path, uid, gid)
+                    dst_path = join(dst_dir, file)
 
-print("Done!")
+                    if isfile(dst_path):
+                        os.remove(dst_path)
+
+                    with open(file_path, "rb") as src_file:
+                        src_content = src_file.read()
+
+                    with open(dst_path, "wb") as dst_file:
+                        dst_file.write(expand_data(src_content))
+
+                    if dst.startswith(HOME):
+                        os.chown(dst_path, uid, gid)
+
+    print("Done!")
+
+
+if __name__ == "__main__":
+    main()

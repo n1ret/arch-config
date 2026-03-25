@@ -33,20 +33,20 @@ Build a binary of the arch-cfg.py script
 
 Update the file at the global config dir
 ```sh
-sudo python arch-cfg.py --src path/to/file
+sudo python arch_cfg.py --src path/to/file
 ```
 
 Specify the config directory to update
 ```sh
-sudo python arch-cfg.py --src path/to/file --config hyprland
+sudo python arch_cfg.py --src path/to/file --config hyprland
 ```
 
 Turn on addition of the `bin` directory to the PATH env variable using /etc/profile.d file
 ```sh
-sudo python arch-cfg.py --install
+sudo python arch_cfg.py --install
 ```
 
 Turn off addition of the `bin` directory to the PATH env variable using /etc/profile.d file
 ```sh
-sudo python arch-cfg.py --delete
+sudo python arch_cfg.py --delete
 ```

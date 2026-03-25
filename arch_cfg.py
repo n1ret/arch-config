@@ -1,8 +1,22 @@
 import os
+import re
 from argparse import ArgumentParser, ArgumentTypeError, Namespace
 from os import path
 
 from dirs import BIN_DIR, CONFIGS, DIRS_ALIASES
+
+UNESCAPED_PLACEHOLDER_RE = re.compile(r"(?<!\\)\{\{([\w-]+)\}\}")
+
+
+def escape_text(data: bytes):
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data
+
+    text = text.replace("\\", "\\\\")
+    text = UNESCAPED_PLACEHOLDER_RE.sub(r"\\{{\1}}", text)
+    return text.encode("utf-8")
 
 
 class PathType:
@@ -50,9 +64,11 @@ def copy_file(abspath: str, config: str, uid: int, gid: int):
                 os.chown(cur_dir, uid, gid)
 
         # Create file
+        with open(abspath, "rb") as src_file:
+            src_content = src_file.read()
+
         with open(dstpath, "wb") as f:
-            with open(abspath, "rb") as src_file:
-                f.write(src_file.read())
+            f.write(escape_text(src_content))
         os.chown(dstpath, uid, gid)
 
         break
