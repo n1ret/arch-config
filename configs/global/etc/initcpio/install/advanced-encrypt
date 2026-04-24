@@ -39,7 +39,7 @@ help() {
     cat <<HELPEOF
 This hook has full back capability with the default \`encrypt\` hook.
 So it has the same kernel params to work.
-Difference only in Ctrl+C shortcut to suspend machine.
+The only difference is that the version includes a Ctrl+C shortcut to suspend the machine, a Ctrl+A shortcut to clear the password input and support for displaying ASCII art at the bottom-right corner. The ASCII art must be located in the /etc/initcpio/assets/advanced-encrypt/ascii-art file.
 HELPEOF
 }
 
