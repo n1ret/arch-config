@@ -1,7 +1,49 @@
 #!/usr/bin/ash
 
 run_hook() {
-    local prompt_password
+    local ascii_art_path="/etc/initcpio/assets/advanced-encrypt/ascii-art"
+
+    local prompt_password draw_logo
+    local set_cur_pos save_cur_pos="\e[s" restore_cur_pos="\e[u" clear_eol="\e[K" \
+        cur_left="\e[D" green="\e[0;32m" reset="\e[0m"
+
+    set_cur_pos() {
+        printf "\e[${1};${2}H"
+    }
+
+    draw_logo() {
+        [ -e "$ascii_art_path" ] || return 0
+
+        local lines cols
+        read lines cols < <(stty size)
+
+        local ascii_art="$(printf "%b" "$(cat "$ascii_art_path")")"
+
+        local filtered_art="$(
+            printf "%s" "$ascii_art" |
+                sed -E 's/\[[0-9;]*[a-zA-Z]//g'
+        )"
+        local art_lines="$(printf "%s\n" "$filtered_art" | wc -l)"
+        local art_cols="$(printf "%s\n" "$filtered_art" | awk "{ if (length > max) max = length } END { print max }")"
+
+        local row=$((lines - art_lines + 1)) col=$((cols - art_cols + 1))
+
+        [ "$row" -lt 1 -o "$col" -lt 1 ] && return 0
+
+        printf "$save_cur_pos"
+
+        local i=0
+        while IFS= read -r line; do
+            set_cur_pos $((row + i)) $col
+
+            printf "%s" "$line"
+
+            i=$((i + 1))
+        done < <(echo "$ascii_art")
+
+        printf "$restore_cur_pos"
+    }
+
     prompt_password() {
         local res password prev_stty
 
@@ -10,8 +52,6 @@ run_hook() {
         prev_stty=$(stty -g)
         stty raw -echo
 
-        local save_cur_pos="\e[s" restore_cur_pos="\e[u" clear_eol="\e[K" cur_left="\e[D" green="\e[0;32m" reset="\e[0m"
-
         printf "$save_cur_pos"
 
         password=""
@@ -19,24 +59,24 @@ run_hook() {
             symb=$(dd bs=1 count=1 2>/dev/null)
             matches=$(printf "$symb" | grep -E '^[]a-zA-Z0-9~`!@#$%^&*()_=+[{}/?\|'"'"'":;<>\.,-]' | wc -l)
             case "$symb" in
-                "") /usr/bin/poweroff -f;;
-                "") break;;
-                "")
-                    password=""
-                    printf "$restore_cur_pos$clear_eol"
-                    ;;
-                "")
-                    if [ "$password" ]; then
-                        password="${password%?}"
-                        printf "$cur_left$clear_eol"
-                    fi
-                    ;;
-                *)
-                    if [ "$matches" -gt "0" ]; then
-                        printf "*"
-                        password="$password""$symb"
-                    fi
-                    ;;
+            "") /usr/bin/poweroff -f ;;
+            "") break ;;
+            "")
+                password=""
+                printf "$restore_cur_pos$clear_eol"
+                ;;
+            "")
+                if [ "$password" ]; then
+                    password="${password%?}"
+                    printf "$cur_left$clear_eol"
+                fi
+                ;;
+            *)
+                if [ "$matches" -gt "0" ]; then
+                    printf "*"
+                    password="$password""$symb"
+                fi
+                ;;
             esac
         done
 
@@ -73,19 +113,19 @@ EOF
             ckeyfile=$ckarg1
         elif resolved=$(resolve_device "${ckdev}" "${rootdelay}"); then
             case ${ckarg1} in
-                *[!0-9]*)
-                    # Use a file on the device
-                    # ckarg1 is not numeric: ckarg1=filesystem, ckarg2=path
-                    mkdir /ckey
-                    mount -r -t "$ckarg1" "$resolved" /ckey
-                    dd if="/ckey/$ckarg2" of="$ckeyfile" >/dev/null 2>&1
-                    umount /ckey
-                    ;;
-                *)
-                    # Read raw data from the block device
-                    # ckarg1 is numeric: ckarg1=offset, ckarg2=length
-                    dd if="$resolved" of="$ckeyfile" bs=1 skip="$ckarg1" count="$ckarg2" >/dev/null 2>&1
-                    ;;
+            *[!0-9]*)
+                # Use a file on the device
+                # ckarg1 is not numeric: ckarg1=filesystem, ckarg2=path
+                mkdir /ckey
+                mount -r -t "$ckarg1" "$resolved" /ckey
+                dd if="/ckey/$ckarg2" of="$ckeyfile" >/dev/null 2>&1
+                umount /ckey
+                ;;
+            *)
+                # Read raw data from the block device
+                # ckarg1 is numeric: ckarg1=offset, ckarg2=length
+                dd if="$resolved" of="$ckeyfile" bs=1 skip="$ckarg1" count="$ckarg2" >/dev/null 2>&1
+                ;;
             esac
         fi
         [ ! -f "${ckeyfile}" ] && echo "Keyfile could not be opened. Reverting to passphrase."
@@ -116,24 +156,25 @@ EOF
     }
 
     set -f
-    OLDIFS="$IFS"; IFS=,
+    OLDIFS="$IFS"
+    IFS=,
     for cryptopt in ${cryptoptions}; do
         case ${cryptopt} in
-            allow-discards|discard)
-                cryptargs="${cryptargs} --allow-discards"
-                ;;
-            no-read-workqueue|perf-no_read_workqueue)
-                cryptargs="${cryptargs} --perf-no_read_workqueue"
-                ;;
-            no-write-workqueue|perf-no_write_workqueue)
-                cryptargs="${cryptargs} --perf-no_write_workqueue"
-                ;;
-            sector-size=*)
-                cryptargs="${cryptargs} --sector-size ${cryptopt#*=}"
-                ;;
-            *)
-                echo "Encryption option '${cryptopt}' not known, ignoring." >&2
-                ;;
+        allow-discards | discard)
+            cryptargs="${cryptargs} --allow-discards"
+            ;;
+        no-read-workqueue | perf-no_read_workqueue)
+            cryptargs="${cryptargs} --perf-no_read_workqueue"
+            ;;
+        no-write-workqueue | perf-no_write_workqueue)
+            cryptargs="${cryptargs} --perf-no_write_workqueue"
+            ;;
+        sector-size=*)
+            cryptargs="${cryptargs} --sector-size ${cryptopt#*=}"
+            ;;
+        *)
+            echo "Encryption option '${cryptopt}' not known, ignoring." >&2
+            ;;
         esac
     done
     set +f
@@ -159,6 +200,8 @@ EOF
                         --prompt="A password is required to access the ${cryptname} volume" \
                         --command="cryptsetup open --type luks --key-file=- ${resolved} ${cryptname} ${cryptargs} ${CSQUIET}"
                 else
+                    draw_logo
+
                     echo ""
                     echo "Press Ctrl+C to poweroff."
                     echo "A password is required to access the ${cryptname} volume:"
@@ -190,11 +233,11 @@ EOF
             IFS=: read c_hash c_cipher c_keysize c_offset c_skip <<EOF
 $crypto
 EOF
-            [ -n "$c_hash" ]    && exe="$exe --hash '$c_hash'"
-            [ -n "$c_cipher" ]  && exe="$exe --cipher '$c_cipher'"
+            [ -n "$c_hash" ] && exe="$exe --hash '$c_hash'"
+            [ -n "$c_cipher" ] && exe="$exe --cipher '$c_cipher'"
             [ -n "$c_keysize" ] && exe="$exe --key-size '$c_keysize'"
-            [ -n "$c_offset" ]  && exe="$exe --offset '$c_offset'"
-            [ -n "$c_skip" ]    && exe="$exe --skip '$c_skip'"
+            [ -n "$c_offset" ] && exe="$exe --offset '$c_offset'"
+            [ -n "$c_skip" ] && exe="$exe --skip '$c_skip'"
             if [ -f "$ckeyfile" ]; then
                 exe="$exe --key-file $ckeyfile"
             else
