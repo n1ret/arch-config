@@ -113,10 +113,6 @@ colors
 export MANPAGER="less -R --use-color -Dd+g -Du+b"
 export MANROFFOPT="-P -c"
 
-## Plugins section: Enable fish style features
-# Use syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # Set terminal window and tab/icon title
 #
 # usage: title short_tab_title [long_window_title]

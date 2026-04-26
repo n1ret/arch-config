@@ -1,8 +1,8 @@
 #!/bin/sh
 
-base_dir="$(dirname $(realpath "$0"))/../.."
+base_dir="$(dirname "$(realpath "$0")")/../.."
 
-$base_dir/scripts/install_paru
+"$base_dir"/scripts/install_paru
 
 paru --needed -S \
     hyprland hyprpaper hyprlock hypridle \
