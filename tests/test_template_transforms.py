@@ -1,6 +1,5 @@
 import os
 import unittest
-from pathlib import Path
 
 from arch_cfg import escape_text
 from setup import expand_env_templates
@@ -25,6 +24,9 @@ class ExpandEnvTemplatesTests(unittest.TestCase):
             r"C:\Users\me",
         )
 
+    def test_triple_braces(self):
+        self.assertEqual(expand_env_templates("{\\{{text}}}"), "{{{text}}}")
+
 
 class EscapeDataTests(unittest.TestCase):
     def test_escapes_unescaped_placeholder(self):
@@ -42,3 +44,6 @@ class EscapeDataTests(unittest.TestCase):
     def test_non_utf8_bytes_are_unchanged(self):
         data = b"\xff\xfe\xfd"
         self.assertEqual(escape_text(data), data)
+
+    def test_triple_braces(self):
+        self.assertEqual(escape_text(b"{{{text}}}"), b"{\\{{text}}}")

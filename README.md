@@ -28,6 +28,12 @@ python setup.py [-c cfg_name]
 ./scripts/install_paru
 ```
 
+### Run tests
+
+```sh
+python -m unittest discover -s tests
+```
+
 ### Config for config)
 
 Build a binary of the arch-cfg.py script
