@@ -12,6 +12,11 @@ _sudo_user = os.getenv("SUDO_USER")
 if _sudo_user is not None:
     HOME = os.path.expanduser(f"~{_sudo_user}")
 
+if HOME is None:
+    print("Can't detect home directory. A HOME or SUDO_USER var must be set")
+
+    exit(1)
+
 DIRS_ALIASES = (
     ("usr", "/usr"),
     ("etc", "/etc"),

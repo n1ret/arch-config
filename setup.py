@@ -65,7 +65,7 @@ def main():
     sudo_available = not shutil.which("sudo") is not None
 
     if sudo_available:
-        print(f"Sudo is not available")
+        print("Sudo is not available")
         quit(-1)
 
     argparser = ArgumentParser(description="Setup configs utility")
@@ -119,7 +119,7 @@ def main():
 
         for src, dst in DIRS_ALIASES:
             src = join(CONFIGS, config, src)
-            for dir, dirs, files in os.walk(src):
+            for dir, _, files in os.walk(src):
                 if split(dir)[-1].startswith(".git"):
                     continue
 
