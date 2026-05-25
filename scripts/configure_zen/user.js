@@ -5,3 +5,6 @@ user_pref("apz.overscroll.enabled", false);
 user_pref("browser.gesture.swipe.left", "");
 user_pref("browser.gesture.swipe.right", "");
 
+// Auto scroll
+user_pref("general.autoScroll", true);
+
