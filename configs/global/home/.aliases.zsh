@@ -1,13 +1,18 @@
 function mkcode() {
-  mkdir -p $1 && code $1
+  for arg in "$@"; do
+    mkdir -p "$arg" || return 1
+  done
+
+  code "$@"
+  return $?
 }
 
 function mkcodee() {
-  mkcode $1 && exit
+  mkcode "$@" && exit
 }
 
 function codee() {
-  code $1 && exit
+  code "$@" && exit
 }
 
 if [ "$TERM_PROGRAM" = "vscode" ]; then
