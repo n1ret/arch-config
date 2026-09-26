@@ -162,6 +162,7 @@ def main():
 
                         with tempfile.NamedTemporaryFile() as tmp:
                             tmp.write(dst_content)
+                            tmp.flush()
 
                             if (
                                 run_sudo(
