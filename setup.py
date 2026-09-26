@@ -80,6 +80,7 @@ def main():
         ],
         help="Configs to install (minimal + specified configs)",
     )
+    argparser.add_argument("--verbose", "-v", action="store_true")
 
     args = argparser.parse_args()
 
@@ -106,6 +107,9 @@ def main():
     for config in ("minimal", *args.configs):
         execute_path = join(CONFIGS, config, "execute.sh")
         if isfile(execute_path) and os.access(execute_path, os.X_OK):
+            if args.verbose:
+                print(f"Executing a shell for config: {config}")
+
             result = subprocess.run([execute_path])
             status_code = result.returncode
             if status_code != 0:
@@ -122,6 +126,8 @@ def main():
                     continue
 
                 dst_dir = join(dst, dir.removeprefix(src).lstrip(os.sep))
+                if args.verbose:
+                    print(f"Creating directory: {dst_dir}")
 
                 if is_system_path(dst_dir):
                     if not check_sudo(dst_dir):
@@ -142,6 +148,9 @@ def main():
 
                     dst_path = join(dst_dir, file)
                     src_mode = os.stat(file_path).st_mode & 0o777
+
+                    if args.verbose:
+                        print(f"Replacing file: {dst_path}")
 
                     with open(file_path, "rb") as src_file:
                         src_content = src_file.read()
