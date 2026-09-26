@@ -35,7 +35,7 @@ if command -v /bin/nvim > /dev/null; then
   export VISUAL=/bin/nvim
 fi
 
-WORDCHARS=$(printf "%s" "$WORDCHARS" | tr -d "/.;[](){}\-_")    # Don't consider certain characters part of the word
+WORDCHARS=$(printf "%s" "$WORDCHARS" | tr -d "/.;[](){}\\-_")    # Don't consider certain characters part of the word
 export LANG=en_US.UTF-8
 
 ## Keybindings section
@@ -67,7 +67,7 @@ keys[backspace]=""
 keys[cbackspace]="^H"
 
 cbind -R " "-"~" self-insert
-cbind -R "\M-^@"-"\M-^?" self-insert
+cbind -R "\\M-^@"-"\\M-^?" self-insert
 cbind "^[[200~" bracketed-paste
 ckbind "home" beginning-of-line
 ckbind "end" end-of-line
@@ -132,11 +132,11 @@ function title {
 
   case "$TERM" in
     xterm*|putty*|rxvt*|konsole*|ansi|mlterm*|alacritty|kitty|wezterm|st*)
-      print -Pn "\e]2;${2:q}\a" # set window name
-      print -Pn "\e]1;${1:q}\a" # set tab name
+      print -Pn "\\e]2;${2:q}\\a" # set window name
+      print -Pn "\\e]1;${1:q}\\a" # set tab name
       ;;
     screen*|tmux*)
-      print -Pn "\ek${1:q}\e\\" # set screen hardstatus
+      print -Pn "\\ek${1:q}\\e\\\\" # set screen hardstatus
       ;;
     *)
     # Try to use terminfo to set the title
@@ -310,7 +310,7 @@ function mzc_termsupport_cwd {
   URL_PATH="$(zsh_urlencode -P $PWD)" || return 1
 
   # common control sequence (OSC 7) to set current host and path
-  printf "\e]7;%s\a" "file://${URL_HOST}${URL_PATH}"
+  printf "\\e]7;%s\\a" "file://${URL_HOST}${URL_PATH}"
 }
 
 # Use a precmd hook instead of a chpwd hook to avoid contaminating output

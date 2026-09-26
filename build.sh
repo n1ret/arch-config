@@ -3,7 +3,7 @@
 prev_dir="$(pwd)"
 script_dir="$(dirname "$(realpath "$0")")"
 
-rm -rf "$script_dir/bin" &&
+rm -rf "${script_dir:?}/bin" &&
   mkdir -p "$script_dir/bin" &&
   cd "$script_dir/bin" && {
   python -m venv __venv &&

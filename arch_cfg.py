@@ -109,7 +109,7 @@ def main():
         "--config",
         "-c",
         type=str,
-        default="global",
+        default="minimal",
         help="Set config for file location",
     )
     group = parser.add_mutually_exclusive_group(required=False)
