@@ -72,12 +72,13 @@ def main():
     argparser.add_argument(
         "--config",
         "-c",
+        nargs="*",
         choices=[
-            path
-            for path in os.listdir(CONFIGS)
-            if isdir(join(CONFIGS, path)) and path != "global"
+            name
+            for name in os.listdir(CONFIGS)
+            if isdir(join(CONFIGS, name)) and name != "minimal"
         ],
-        help="Config variant",
+        help="Configs to install (default: minimal + specified configs)",
     )
 
     args = argparser.parse_args()
@@ -102,7 +103,7 @@ def main():
 
         return True
 
-    for config in ("global", args.config):
+    for config in ("minimal", *args.config):
         if not config:
             continue
 

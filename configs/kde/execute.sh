@@ -1,9 +1,5 @@
 #!/bin/sh
 
-base_dir="$(dirname "$(realpath "$0")")/../.."
-
-"$base_dir"/scripts/install_paru
-
 paru -S --needed \
   aurorae bluedevil breeze breeze-cursors breeze-gtk kactivitymanagerd kde-cli-tools \
   kde-gtk-config kdecoration kdeplasma-addons kglobalacceld kinfocenter kmenuedit \

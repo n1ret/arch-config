@@ -1,9 +1,5 @@
 #!/bin/sh
 
-base_dir="$(dirname "$(realpath "$0")")/../.."
-
-"$base_dir"/scripts/install_paru
-
 paru --needed -S \
     hyprland hyprpaper hyprlock hypridle \
     jq \
@@ -22,4 +18,3 @@ paru --needed -S \
 
 sudo systemctl enable sddm.service
 systemctl enable --user pipewire-pulse.service pipewire.service
-
