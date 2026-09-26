@@ -62,9 +62,9 @@ def main():
         print("Do not run this script as root")
         quit(-1)
 
-    sudo_available = not shutil.which("sudo") is not None
+    sudo_available = shutil.which("sudo") is not None
 
-    if sudo_available:
+    if not sudo_available:
         print("Sudo is not available")
         quit(-1)
 
