@@ -70,15 +70,15 @@ def main():
 
     argparser = ArgumentParser(description="Setup configs utility")
     argparser.add_argument(
-        "--config",
-        "-c",
+        "configs",
         nargs="*",
+        default=[],
         choices=[
             name
             for name in os.listdir(CONFIGS)
             if isdir(join(CONFIGS, name)) and name != "minimal"
         ],
-        help="Configs to install (default: minimal + specified configs)",
+        help="Configs to install (minimal + specified configs)",
     )
 
     args = argparser.parse_args()
@@ -103,10 +103,7 @@ def main():
 
         return True
 
-    for config in ("minimal", *args.config):
-        if not config:
-            continue
-
+    for config in ("minimal", *args.configs):
         execute_path = join(CONFIGS, config, "execute.sh")
         if isfile(execute_path) and os.access(execute_path, os.X_OK):
             result = subprocess.run([execute_path])
