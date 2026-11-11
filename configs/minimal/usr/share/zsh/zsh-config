@@ -103,8 +103,9 @@ alias df='df -h'                                                # Human-readable
 alias free='free -m'                                            # Show sizes in MB
 alias la='ls -A'
 alias ll='ls -lAh'
+alias less='less -R'                                            # Always use ANSI color sequences
 
-# Theming section  
+# Theming section
 autoload -U compinit colors zcalc
 compinit -d
 colors
